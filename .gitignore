@@ -1,0 +1,16 @@
+# Ignore build outputs
+order-service/node_modules/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment files
+*.env
+*.env.*
+
+# VS Code settings
+.vscode/
