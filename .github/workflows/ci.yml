@@ -22,20 +22,22 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-          cache-dependency-path: ./order-service/package-lock.json,./order-webapp/package-lock.json
+          cache-dependency-path: |
+            order-service/package-lock.json
+            order-webapp/package-lock.json
 
       - name: Install dependencies (order-service)
-        working-directory: ./order-service
+        working-directory: order-service
         run: npm install
 
       - name: Run unit tests (order-service)
-        working-directory: ./order-service
+        working-directory: order-service
         run: npm test
 
       - name: Install dependencies (order-webapp)
-        working-directory: ./order-webapp
+        working-directory: order-webapp
         run: npm install
 
       - name: Run unit tests (order-webapp)
-        working-directory: ./order-webapp
+        working-directory: order-webapp
         run: npm test
