@@ -25,5 +25,11 @@ jobs:
         with:
           node-version: "20"
           cache: "npm"
+          
       - name: Install dependencies
+        working-directory: order-service
+        run: npm ci
+
+      - name: Install dependencies (order-webapp)
+        working-directory: order-webapp
         run: npm ci
