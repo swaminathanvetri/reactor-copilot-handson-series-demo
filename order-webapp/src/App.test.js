@@ -1,8 +1,11 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
+test('renders order tracking app', () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+  const titleElement = screen.getByText(/Real-time Order Tracking/i);
+  expect(titleElement).toBeInTheDocument();
+  
+  const createOrderSection = screen.getByText(/Create New Order/i);
+  expect(createOrderSection).toBeInTheDocument();
 });
