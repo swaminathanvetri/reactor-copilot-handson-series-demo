@@ -1,10 +1,9 @@
 // Basic Express.js server with WebSocket endpoint using ws
 
-const express = require('express');
 const http = require('http');
 const WebSocket = require('ws');
+const { app } = require('./app');
 
-const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
@@ -18,10 +17,6 @@ wss.on('connection', (ws) => {
   ws.on('close', () => {
     console.log('Client disconnected');
   });
-});
-
-app.get('/', (req, res) => {
-  res.send('WebSocket server is running.');
 });
 
 const PORT = process.env.PORT || 8000;
