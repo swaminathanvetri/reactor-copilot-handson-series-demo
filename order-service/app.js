@@ -9,6 +9,9 @@ app.use(express.json());
 let orders = [];
 let nextOrderId = 1;
 
+// Store WebSocket connections for broadcasting
+let wsConnections = new Set();
+
 // Validation utilities
 const validateOrder = (order) => {
   const errors = [];
@@ -51,6 +54,20 @@ const resetData = () => {
   nextOrderId = 1;
 };
 
+// Helper function to broadcast order updates via WebSocket
+const broadcastOrderUpdate = (order) => {
+  const message = JSON.stringify({
+    type: 'orderUpdate',
+    data: order
+  });
+  
+  wsConnections.forEach(ws => {
+    if (ws.readyState === 1) { // WebSocket.OPEN
+      ws.send(message);
+    }
+  });
+};
+
 // REST API Endpoints
 
 // Create order (POST /orders)
@@ -64,14 +81,19 @@ app.post('/orders', (req, res) => {
       });
     }
 
+    const currentTime = new Date().toISOString();
+    const status = req.body.status || 'pending';
     const order = {
       id: nextOrderId++,
       customerId: req.body.customerId,
       items: req.body.items,
-      status: req.body.status || 'pending',
+      status: status,
       total: calculateTotal(req.body.items),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      createdAt: currentTime,
+      updatedAt: currentTime,
+      statusHistory: {
+        [status]: currentTime
+      }
     };
 
     orders.push(order);
@@ -155,16 +177,33 @@ app.put('/orders/:id', (req, res) => {
       });
     }
 
+    const currentTime = new Date().toISOString();
+    const newStatus = req.body.status || orders[orderIndex].status;
+    const currentOrder = orders[orderIndex];
+    
+    // Update status history if status changed
+    const statusHistory = { ...currentOrder.statusHistory };
+    if (newStatus !== currentOrder.status && !statusHistory[newStatus]) {
+      statusHistory[newStatus] = currentTime;
+    }
+
     const updatedOrder = {
-      ...orders[orderIndex],
+      ...currentOrder,
       customerId: req.body.customerId,
       items: req.body.items,
-      status: req.body.status || orders[orderIndex].status,
+      status: newStatus,
       total: calculateTotal(req.body.items),
-      updatedAt: new Date().toISOString()
+      updatedAt: currentTime,
+      statusHistory: statusHistory
     };
 
     orders[orderIndex] = updatedOrder;
+    
+    // Broadcast update if status changed
+    if (newStatus !== currentOrder.status) {
+      broadcastOrderUpdate(updatedOrder);
+    }
+    
     res.json(updatedOrder);
   } catch (error) {
     res.status(500).json({
@@ -213,4 +252,4 @@ app.get('/', (req, res) => {
 });
 
 // Export app and utilities for testing
-module.exports = { app, resetData };
+module.exports = { app, resetData, wsConnections, broadcastOrderUpdate };

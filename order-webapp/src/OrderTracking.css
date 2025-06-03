@@ -1,0 +1,226 @@
+.order-tracking {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.order-tracking h1 {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 60px;
+  color: #333;
+}
+
+.tracking-input {
+  margin-bottom: 80px;
+}
+
+.input-group {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #333;
+  margin-right: 20px;
+  min-width: 140px;
+}
+
+.input-group input {
+  flex: 1;
+  padding: 12px 0;
+  border: none;
+  border-bottom: 2px solid #ddd;
+  font-size: 1.1rem;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.input-group input:focus {
+  border-bottom-color: #000;
+}
+
+.input-group input::placeholder {
+  color: #999;
+  font-size: 1.1rem;
+}
+
+.track-button {
+  background: #000;
+  color: white;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 25px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  min-width: 100px;
+}
+
+.track-button:hover:not(:disabled) {
+  background: #333;
+}
+
+.track-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.error-message {
+  color: #d32f2f;
+  font-size: 1rem;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.order-status {
+  margin-top: 60px;
+}
+
+.status-timeline {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.status-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  position: relative;
+}
+
+.step-indicator {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  width: 100%;
+  justify-content: center;
+}
+
+.step-circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 3px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  position: relative;
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+
+.step-indicator.completed .step-circle {
+  border-color: #000;
+  background: #000;
+}
+
+.checkmark {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.step-line {
+  height: 3px;
+  background: #ddd;
+  flex: 1;
+  margin: 0 -30px;
+  position: relative;
+  z-index: 1;
+  transition: background-color 0.3s ease;
+}
+
+.step-line.completed {
+  background: #000;
+}
+
+.step-content {
+  text-align: center;
+  min-height: 60px;
+}
+
+.step-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.step-timestamp {
+  font-size: 0.95rem;
+  color: #666;
+  line-height: 1.4;
+}
+
+/* Hide the line after the last step */
+.status-step:last-child .step-line {
+  display: none;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .order-tracking {
+    padding: 20px 15px;
+  }
+  
+  .order-tracking h1 {
+    font-size: 2rem;
+    margin-bottom: 40px;
+  }
+  
+  .input-group {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+  }
+  
+  .input-group label {
+    min-width: auto;
+    margin-right: 0;
+    margin-bottom: 5px;
+  }
+  
+  .status-timeline {
+    flex-direction: column;
+    gap: 40px;
+  }
+  
+  .step-indicator {
+    flex-direction: row;
+    justify-content: flex-start;
+  }
+  
+  .step-line {
+    width: 3px;
+    height: 40px;
+    margin: 0;
+    position: absolute;
+    left: 29px;
+    top: 60px;
+  }
+  
+  .status-step:last-child .step-line {
+    display: block;
+    visibility: hidden;
+  }
+  
+  .step-content {
+    text-align: left;
+    margin-left: 80px;
+    margin-top: -60px;
+  }
+}
