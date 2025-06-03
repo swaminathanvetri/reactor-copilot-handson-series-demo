@@ -25,7 +25,10 @@ jobs:
         with:
           node-version: "20"
           cache: "npm"
-          
+          cache-dependency-path: |
+            order-service/package-lock.json
+            order-webapp/package-lock.json
+
       - name: Install dependencies
         working-directory: order-service
         run: npm ci
