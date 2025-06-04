@@ -10,8 +10,37 @@
 }
 
 .App-header h1 {
-  margin: 0;
+  margin: 0 0 20px 0;
   font-size: 2rem;
+}
+
+.app-navigation {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.nav-button {
+  padding: 10px 20px;
+  background-color: #444;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.nav-button:hover {
+  background-color: #555;
+}
+
+.nav-button.active {
+  background-color: #007bff;
+}
+
+.nav-button.active:hover {
+  background-color: #0056b3;
 }
 
 main {
