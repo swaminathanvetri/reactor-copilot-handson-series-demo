@@ -2,10 +2,13 @@
 
 const http = require('http');
 const WebSocket = require('ws');
-const { app } = require('./app');
+const { app, setWebSocketServer } = require('./app');
 
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
+
+// Set the WebSocket server instance in the app
+setWebSocketServer(wss);
 
 // WebSocket endpoint
 wss.on('connection', (ws) => {
