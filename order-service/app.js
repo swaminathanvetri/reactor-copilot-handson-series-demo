@@ -11,6 +11,29 @@ app.use(express.json());
 let orders = [];
 let nextOrderId = 1;
 
+// WebSocket server instance (will be set by server.js)
+let wss = null;
+
+// Function to set WebSocket server instance
+const setWebSocketServer = (webSocketServer) => {
+  wss = webSocketServer;
+};
+
+// Function to broadcast order updates to all connected clients
+const broadcastOrderUpdate = (order) => {
+  if (wss) {
+    const message = JSON.stringify({
+      type: 'orderUpdate',
+      order: order
+    });
+    wss.clients.forEach((client) => {
+      if (client.readyState === 1) { // WebSocket.OPEN
+        client.send(message);
+      }
+    });
+  }
+};
+
 // Validation utilities
 const validateOrder = (order) => {
   const errors = [];
@@ -66,17 +89,30 @@ app.post('/orders', (req, res) => {
       });
     }
 
+    const now = new Date().toISOString();
+    const initialStatus = req.body.status || 'pending';
+    
     const order = {
       id: nextOrderId++,
       customerId: req.body.customerId,
       items: req.body.items,
-      status: req.body.status || 'pending',
+      status: initialStatus,
       total: calculateTotal(req.body.items),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      createdAt: now,
+      updatedAt: now,
+      statusHistory: [
+        {
+          status: initialStatus,
+          timestamp: now
+        }
+      ]
     };
 
     orders.push(order);
+    
+    // Broadcast new order to all connected clients
+    broadcastOrderUpdate(order);
+    
     res.status(201).json(order);
   } catch (error) {
     res.status(500).json({
@@ -157,16 +193,33 @@ app.put('/orders/:id', (req, res) => {
       });
     }
 
+    const currentOrder = orders[orderIndex];
+    const newStatus = req.body.status || currentOrder.status;
+    const now = new Date().toISOString();
+    
     const updatedOrder = {
-      ...orders[orderIndex],
+      ...currentOrder,
       customerId: req.body.customerId,
       items: req.body.items,
-      status: req.body.status || orders[orderIndex].status,
+      status: newStatus,
       total: calculateTotal(req.body.items),
-      updatedAt: new Date().toISOString()
+      updatedAt: now,
+      statusHistory: currentOrder.statusHistory || []
     };
 
+    // Add to status history if status changed
+    if (newStatus !== currentOrder.status) {
+      updatedOrder.statusHistory.push({
+        status: newStatus,
+        timestamp: now
+      });
+    }
+
     orders[orderIndex] = updatedOrder;
+    
+    // Broadcast order update to all connected clients
+    broadcastOrderUpdate(updatedOrder);
+    
     res.json(updatedOrder);
   } catch (error) {
     res.status(500).json({
@@ -215,4 +268,4 @@ app.get('/', (req, res) => {
 });
 
 // Export app and utilities for testing
-module.exports = { app, resetData };
+module.exports = { app, resetData, setWebSocketServer };
